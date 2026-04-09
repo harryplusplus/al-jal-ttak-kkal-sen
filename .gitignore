@@ -208,3 +208,6 @@ __marimo__/
 
 # VS Code
 /.vscode/
+
+# macOS
+.DS_Store

@@ -1,0 +1,18 @@
+services:
+  falkordb:
+    image: falkordb/falkordb:v4.18.0-alpine
+    ports:
+      - 6379:6379
+      - 3000:3000
+    environment:
+      REDIS_ARGS: >-
+        --save 60 1000
+        --save 300 100
+        --appendonly yes
+        --appendfsync everysec
+    volumes:
+      - falkordb-data:/var/lib/falkordb/data
+    restart: unless-stopped
+
+volumes:
+  falkordb-data:
