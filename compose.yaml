@@ -1,27 +1,19 @@
 services:
-  graphiti:
-    image: zepai/knowledge-graph-mcp:1.0.2
+  falkordb:
+    image: falkordb/falkordb:v4.18.0-alpine
     environment:
-      - OPENAI_API_KEY=ollama
-      - OPENAI_BASE_URL=http://host.docker.internal:11434/v1
-      - SEMAPHORE_LIMIT=5
-      - GRAPHITI_TELEMETRY_ENABLED=false
+      - FALKORDB_ARGS=MAX_QUEUED_QUERIES 25 TIMEOUT 1000 RESULTSET_SIZE 10000
     volumes:
-      - graphiti-data:/var/lib/falkordb/data
-      - graphiti-log:/var/log/graphiti
-      - ./graphiti/config.yaml:/app/mcp/config/config.yaml:ro
+      - graphiti-data:/data
     ports:
       - "6379:6379"
-      - "3000:3000"
-      - "8000:8000"
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "-p", "6379", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 15s
+      start_period: 10s
 
 volumes:
   graphiti-data:
-  graphiti-log:

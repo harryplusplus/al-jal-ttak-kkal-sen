@@ -15,7 +15,7 @@ llm:
 
 embedder:
   provider: "openai"
-  model: "nomic-embed-text"
+  model: "nomic-embed-text-v2-moe"
   dimensions: 768
 
   providers:
