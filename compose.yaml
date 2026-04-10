@@ -1,13 +1,14 @@
 services:
-  falkordb:
-    image: falkordb/falkordb:v4.18.0-alpine
-    environment:
-      - FALKORDB_ARGS=MAX_QUEUED_QUERIES 25 TIMEOUT 1000 RESULTSET_SIZE 10000
-    volumes:
-      - graphiti-data:/data
+  graphiti-db:
+    image: falkordb/falkordb:latest
     ports:
-      - "6379:6379"
-    restart: unless-stopped
+      - "6379:6379" # Redis/FalkorDB port
+      - "3000:3000" # FalkorDB web UI
+    environment:
+      - FALKORDB_PASSWORD=${FALKORDB_PASSWORD:-}
+      - BROWSER=${BROWSER:-1}  # Enable FalkorDB Browser UI (set to 0 to disable)
+    volumes:
+      - graphiti-db-data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "-p", "6379", "ping"]
       interval: 10s
@@ -16,4 +17,5 @@ services:
       start_period: 10s
 
 volumes:
-  graphiti-data:
+  graphiti-db-data:
+    driver: local
