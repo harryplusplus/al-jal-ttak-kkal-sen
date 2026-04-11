@@ -5,11 +5,11 @@
 ```
 OpenClaw ──────┐
                ├─→ Hindsight API (:8888) ─→ PostgreSQL (hindsight DB)
-OpenCode ──────┤   │                     ├─ pgvector (벡터 검색)
-               │         │                     ├─ vchord (의존성)
-Control Plane ─┘         └─→ Ollama (:11434)   ├─ vchord_bm25 (BM25)
-                                   ├─ glm-5.1:cloud  └─ pg_tokenizer (한국어 토크나이징)
-                                   └─ nomic-embed-text-v2-moe
+OpenCode ──────┤   │                        ├─ pgvector (벡터 검색)
+               │   │                        ├─ vchord (의존성)
+Control Plane ─┘   └─→ Ollama (:11434)      ├─ vchord_bm25 (BM25)
+                       ├─ glm-5.1:cloud     └─ pg_tokenizer (한국어 토크나이징)
+                       └─ nomic-embed-text-v2-moe
 ```
 
 ## Setup
@@ -25,7 +25,8 @@ psql -d hindsight -c "CREATE EXTENSION IF NOT EXISTS vector CASCADE;"
 ### vchord (소스 빌드, Rust nightly 필요)
 
 ```sh
-cd VectorChord-1.1.1 && make build && make install
+curl -fsSL https://github.com/tensorchord/VectorChord/archive/refs/tags/1.1.1.tar.gz | tar -xz
+make build -C VectorChord-1.1.1 && make install -C VectorChord-1.1.1
 psql -d hindsight -c "ALTER SYSTEM SET shared_preload_libraries = 'vchord';"
 brew services restart postgresql@18
 psql -d hindsight -c "CREATE EXTENSION IF NOT EXISTS vchord CASCADE;"
@@ -36,11 +37,11 @@ psql -d hindsight -c "CREATE EXTENSION IF NOT EXISTS vchord CASCADE;"
 ```sh
 cargo install cargo-pgrx --version 0.16.1 --locked
 
-cd pg_tokenizer.rs-0.1.1
-cargo pgrx install --release --pg-config /opt/homebrew/bin/pg_config
+curl -fsSL https://github.com/tensorchord/pg_tokenizer.rs/archive/refs/tags/0.1.1.tar.gz | tar -xz
+cargo pgrx install --release --pg-config /opt/homebrew/bin/pg_config --manifest-path pg_tokenizer.rs-0.1.1/Cargo.toml
 
-cd VectorChord-bm25-0.3.0
-cargo pgrx install --release --pg-config /opt/homebrew/bin/pg_config
+curl -fsSL https://github.com/tensorchord/VectorChord-bm25/archive/refs/tags/0.3.0.tar.gz | tar -xz
+cargo pgrx install --release --pg-config /opt/homebrew/bin/pg_config --manifest-path VectorChord-bm25-0.3.0/Cargo.toml
 
 psql -d hindsight -c "ALTER SYSTEM SET shared_preload_libraries = 'vchord,pg_tokenizer';"
 brew services restart postgresql@18
