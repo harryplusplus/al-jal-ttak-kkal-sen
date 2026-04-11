@@ -1,0 +1,26 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "*": "allow",
+  },
+  "mcp": {
+    "ollama-search-fetch": {
+      "type": "local",
+      "command": ["/Users/harry/ai/mcps/ollama-search-fetch.py"],
+      "enabled": true,
+      "environment": {
+        "OLLAMA_API_KEY": "{env:OLLAMA_API_KEY}",
+      },
+    },
+  },
+  "plugin": [
+    [
+      "file:///Users/harry/repo/al-jal-ttak-kkal-sen/external/hindsight/hindsight-integrations/opencode/dist/index.js",
+      {
+        "hindsightApiUrl": "http://localhost:8888",
+        "bankId": "openclaw",
+        "skipAgents": ["gemini-3-flash-preview"],
+      },
+    ],
+  ],
+}
