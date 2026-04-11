@@ -1,0 +1,9 @@
+[submodule "external/VectorChord"]
+	path = external/VectorChord
+	url = https://github.com/tensorchord/VectorChord.git
+[submodule "external/pg_tokenizer.rs"]
+	path = external/pg_tokenizer.rs
+	url = https://github.com/tensorchord/pg_tokenizer.rs.git
+[submodule "external/VectorChord-bm25"]
+	path = external/VectorChord-bm25
+	url = https://github.com/tensorchord/VectorChord-bm25.git

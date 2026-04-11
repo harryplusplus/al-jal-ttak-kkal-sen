@@ -1,5 +1,5 @@
 [project]
-name = "openclaw-home"
+name = "al-jal-ttak-kkal-ssen"
 version = "0.0.0"
 requires-python = ">=3.14"
 dependencies = ["hindsight-api-slim>=0.5.0", "sentence-transformers>=5.4.0"]

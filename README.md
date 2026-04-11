@@ -1,4 +1,6 @@
-# OpenClaw Home
+# Al Jal Ttak Kkal Ssen
+
+Al Jal Ttak Kkal Ssen은 한국어로 "알잘딱깔쎈"
 
 ## Architecture
 
