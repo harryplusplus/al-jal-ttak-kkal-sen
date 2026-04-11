@@ -4,11 +4,11 @@
 
 ```
 OpenClaw ────────────────┐
-                         ├─→ Hindsight API ──────→ PostgreSQL
-OpenCode ────────────────┤       │                  ├─ pgvector (vector search)
-                         │       │                  ├─ vchord (dependency)
-Hindsight Control Plane ─┘       │                  ├─ vchord_bm25 (BM25 search)
-                                 └─→ Ollama          └─ pg_tokenizer (Korean tokenizer)
+                         ├─→ Hindsight API ─→ PostgreSQL
+OpenCode ────────────────┤       │            ├─ pgvector (vector search)
+                         │       │            ├─ vchord (dependency)
+Hindsight Control Plane ─┘       │            ├─ vchord_bm25 (BM25 search)
+                                 └─→ Ollama   └─ pg_tokenizer (Korean tokenizer)
                                      ├─ glm-5.1:cloud
                                      └─ nomic-embed-text-v2-moe
 ```
