@@ -17,6 +17,7 @@ def main() -> None:
         _install_pg_tokenizer()
         _install_vchord_bm25()
         _setup_postgres()
+        _build_opencode_hs()
     except Exception:
         console.print_exception(show_locals=True)
 
@@ -35,6 +36,12 @@ def _setup_postgres() -> None:
     _create_pg_tokenizer_extension()
     _create_vchord_bm25_extension()
     _create_llmlingua2_tokenizer()
+
+
+def _build_opencode_hs() -> None:
+    cwd = Path("external/hindsight/hindsight-integrations/opencode")
+    _run(["npm", "i"], cwd=cwd)
+    _run(["npm", "run", "build"], cwd=cwd)
 
 
 def _git_submodule_update() -> None:
