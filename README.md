@@ -5,6 +5,13 @@
 - uv
 - pnpm
 - postgres
+- ollama
+
+### Ollama Setup
+
+```sh
+ollama pull nomic-embed-text-v2-moe
+```
 
 ### Hindsight Setup
 
