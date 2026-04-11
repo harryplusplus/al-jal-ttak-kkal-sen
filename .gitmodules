@@ -7,3 +7,7 @@
 [submodule "external/VectorChord-bm25"]
 	path = external/VectorChord-bm25
 	url = https://github.com/tensorchord/VectorChord-bm25.git
+[submodule "external/hindsight"]
+	path = external/hindsight
+	url = https://github.com/harryplusplus/hindsight.git
+	branch = debug/logging-and-skip-title
