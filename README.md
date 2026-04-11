@@ -29,10 +29,10 @@ See `.env.example`
 
 Hindsight API:
 ```sh
-uv run hs-api
+tmux new -s hs-api 'uv run hs-api'
 ```
 
 Hindsight Control Plane:
 ```sh
-uv run hs-web
+tmux new -s hs-web 'uv run hs-web'
 ```
