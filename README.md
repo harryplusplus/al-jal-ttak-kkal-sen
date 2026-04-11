@@ -7,10 +7,10 @@ OpenClaw (Discord) ──┐
                      ├─→ Hindsight API (:8888) ─→ PostgreSQL (hindsight DB)
 OpenCode (TUI) ──────┘         │                     ├─ pgvector (벡터 검색)
                                │                     ├─ vchord (의존성)
-                               ├─→ Ollama (:11434)   ├─ vchord_bm25 (BM25)
+Control Plane (API 조회)        ├─→ Ollama (:11434)   ├─ vchord_bm25 (BM25)
                                │   ├─ glm-5.1:cloud  └─ pg_tokenizer (한국어 토크나이징)
                                │   └─ nomic-embed-text-v2-moe
-                               └─← Control Plane (API 조회)
+                               └─← 
 ```
 
 ## Setup
@@ -55,10 +55,12 @@ psql -d hindsight -c "CREATE EXTENSION IF NOT EXISTS vchord_bm25 CASCADE;"
 
 ### 실행
 
+Hindsight API:
 ```sh
 uv run --env-file .env hindsight-api
 ```
 
+Hindsight Control Plane:
 ```sh
 pnpm i && uv run --env-file .env pnpm hindsight-control-plane
 ```
