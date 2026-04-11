@@ -18,6 +18,11 @@ Control Plane ─┘   └─→ Ollama (:11434)      ├─ vchord_bm25 (BM25)
 
 ```sh
 createdb hindsight
+```
+
+### pgvector
+
+```sh
 brew install pgvector
 ```
 
