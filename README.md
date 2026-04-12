@@ -24,7 +24,8 @@ flowchart TD
     end
 ```
 
-- `BAAI/bge-m3` and `BAAI/bge-reranker-v2-m3` are multilingual embedding models with Korean support.
+- `BAAI/bge-m3` is a multilingual embedding model with Korean support.
+- `BAAI/bge-reranker-v2-m3` is a multilingual cross-encoder reranking model with Korean support.
 - `llmlingua2` is a multilingual tokenizer with Korean support.
 
 ## Setup
