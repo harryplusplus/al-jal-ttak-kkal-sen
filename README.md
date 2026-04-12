@@ -32,6 +32,8 @@ Hindsight API:
 tmux new -s hs-api 'uv run hs-api'
 ```
 
+View logs: `tmux capture-pane -t hs-api -p -S -500`
+
 Hindsight Control Plane:
 ```sh
 tmux new -s hs-web 'uv run hs-web'
