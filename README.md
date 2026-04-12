@@ -42,12 +42,17 @@ See `.env.example`
 
 Hindsight API:
 ```sh
-tmux new -s hs-api 'uv run hs-api'
+tmux new -s hsa 'uv run --env-file .env hindsight-api'
 ```
 
 View logs: `tmux capture-pane -t hs-api -p -S -500`
 
 Hindsight Control Plane:
 ```sh
-tmux new -s hs-web 'uv run hs-web'
+tmux new -s hsw 'uv run --env-file .env pnpm hindsight-control-plane'
+```
+
+OpenClaw Gateway:
+```sh
+tmux new -s oc 'openclaw gateway run'
 ```
