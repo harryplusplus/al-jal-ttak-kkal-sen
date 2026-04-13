@@ -1,8 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "permission": {
-    "*": "allow",
-  },
+  "permission": { "*": "allow" },
   "mcp": {
     "ollama_search_fetch": {
       "type": "local",
@@ -10,22 +8,20 @@
         "/Users/harry/repo/al-jal-ttak-kkal-sen/mcps/ollama_search_fetch.py",
       ],
       "enabled": true,
-      "environment": {
-        "OLLAMA_API_KEY": "{env:OLLAMA_API_KEY}",
-      },
+      "environment": { "OLLAMA_API_KEY": "{env:OLLAMA_API_KEY}" },
     },
   },
   "plugin": [
-    [
-      "file:///Users/harry/repo/al-jal-ttak-kkal-sen/external/hindsight/hindsight-integrations/opencode/dist/index.js",
-      {
-        "hindsightApiUrl": "http://localhost:8888",
-        "bankId": "openclaw",
-        "skipAgents": ["gemini-3-flash-preview"],
-        "retainEveryNTurns": 1,
-        "retainOverlapTurns": 0,
-        "retainMode": "last-turn",
-      },
-    ],
+    // [
+    //   "file:///Users/harry/repo/al-jal-ttak-kkal-sen/external/hindsight/hindsight-integrations/opencode/dist/index.js",
+    //   {
+    //     "hindsightApiUrl": "http://localhost:8888",
+    //     "bankId": "openclaw",
+    //     "skipAgents": ["gemini-3-flash-preview"],
+    //     "retainEveryNTurns": 1,
+    //     "retainOverlapTurns": 0,
+    //     "retainMode": "last-turn",
+    //   },
+    // ],
   ],
 }
