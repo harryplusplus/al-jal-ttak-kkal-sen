@@ -3,9 +3,7 @@ name = "opencode-retainer"
 version = "0.0.0"
 requires-python = ">=3.14"
 dependencies = [
-    "httpx>=0.28.1",
-    "platformdirs>=4.5.0",
-    "pydantic>=2.12.5",
+    "hindsight-client>=0.5.1",
     "rich>=14.3.4",
 ]
 

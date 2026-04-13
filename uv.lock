@@ -85,6 +85,18 @@ wheels = [
 ]
 
 [[package]]
+name = "aiohttp-retry"
+version = "2.9.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiohttp" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9d/61/ebda4d8e3d8cfa1fd3db0fb428db2dd7461d5742cea35178277ad180b033/aiohttp_retry-2.9.1.tar.gz", hash = "sha256:8eb75e904ed4ee5c2ec242fefe85bf04240f685391c4879d8f541d6028ff01f1", size = 13608, upload-time = "2024-11-06T10:44:54.574Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1a/99/84ba7273339d0f3dfa57901b846489d2e5c2cd731470167757f1935fffbd/aiohttp_retry-2.9.1-py3-none-any.whl", hash = "sha256:66d2759d1921838256a05a3f80ad7e724936f083e35be5abb5e16eed6be6dc54", size = 9981, upload-time = "2024-11-06T10:44:52.917Z" },
+]
+
+[[package]]
 name = "aiosignal"
 version = "1.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1107,6 +1119,23 @@ wheels = [
 ]
 
 [[package]]
+name = "hindsight-client"
+version = "0.5.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "aiohttp-retry" },
+    { name = "pydantic" },
+    { name = "python-dateutil" },
+    { name = "typing-extensions" },
+    { name = "urllib3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/da/b9/49d0bef6c6459edb87c1057525dfa363f741e8c1fb8305f14f232829fa80/hindsight_client-0.5.1.tar.gz", hash = "sha256:48be993cbd53ffe46bad437d756c70a7b66f3db9f9997e4d5fea8590f065715e", size = 94217, upload-time = "2026-04-13T10:11:43.628Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/bf/86/96aea52119d45e3a3fa1e3813058e98b4db37d467753aafb7bf9056f49a7/hindsight_client-0.5.1-py3-none-any.whl", hash = "sha256:af772f94fb13fdafd7b4f5934ae00ad0ba1ecf9f54c7ce658106e40799d8e358", size = 237591, upload-time = "2026-04-13T10:11:42.039Z" },
+]
+
+[[package]]
 name = "httpcore"
 version = "1.0.9"
 source = { registry = "https://pypi.org/simple" }
@@ -2053,17 +2082,13 @@ name = "opencode-retainer"
 version = "0.0.0"
 source = { editable = "python/opencode-retainer" }
 dependencies = [
-    { name = "httpx" },
-    { name = "platformdirs" },
-    { name = "pydantic" },
+    { name = "hindsight-client" },
     { name = "rich" },
 ]
 
 [package.metadata]
 requires-dist = [
-    { name = "httpx", specifier = ">=0.28.1" },
-    { name = "platformdirs", specifier = ">=4.5.0" },
-    { name = "pydantic", specifier = ">=2.12.5" },
+    { name = "hindsight-client", specifier = ">=0.5.1" },
     { name = "rich", specifier = ">=14.3.4" },
 ]
 
