@@ -6,17 +6,6 @@ import type {
 import { recallResponseToPromptString } from "@vectorize-io/hindsight-client";
 
 export const AjtksPlugin: Plugin = async ({ client: opencode }, options) => {
-  const fetchMessageText = async (sessionId: SessionId, messageId: string) => {
-    const message = await opencode.session.message({
-      path: { id: sessionId, messageID: messageId },
-    });
-    if (message.error) return null;
-    const part = message.data.parts.at(0);
-    if (!part) return null;
-    if (part.type !== "text") return null;
-    return part.text;
-  };
-
   const log = (
     level: "debug" | "info" | "warn" | "error",
     message: string,
@@ -56,35 +45,45 @@ export const AjtksPlugin: Plugin = async ({ client: opencode }, options) => {
   return {
     event: async ({ event }) => {
       if (event.type === "session.deleted") {
-        if (!enabled) return;
-
         const sessionId = event.properties.info.id;
         sessionCache.delete(sessionId);
       }
     },
-    "chat.params": async (input) => {
+    "chat.message": async (_input, output) => {
       if (!enabled) return;
 
-      const sessionId = input.sessionID;
-      sessionCache.setUserMessageId(sessionId, input.message.id);
-      sessionCache.setAgent(sessionId, input.agent);
+      const { message } = output;
+      if (!agentAllowList.includes(message.agent)) return;
+
+      const userText = output.parts
+        .flatMap((part) =>
+          part.type === "text" && !part.synthetic ? [part.text] : [],
+        )
+        .join("\n")
+        .trim();
+      if (!userText) return;
+
+      sessionCache.set(message.sessionID, {
+        agent: message.agent,
+        messageId: message.id,
+        model: message.model,
+        userText,
+      });
     },
     "experimental.chat.system.transform": async (input, output) => {
       const sessionId = input.sessionID;
       if (!sessionId) return;
 
-      const userMessageId = sessionCache.takeUserMessageId(sessionId);
-      const agent = sessionCache.takeAgent(sessionId);
-
       if (!enabled) return;
-      if (!userMessageId) return;
-      if (!agent) return;
-      if (!agentAllowList.includes(agent)) return;
+      const data = sessionCache.takeForModel(sessionId, input.model);
+      if (!data) return;
 
-      const userText = await fetchMessageText(sessionId, userMessageId);
-      if (!userText) return;
-
-      log("debug", "recall input", { sessionId, text: userText });
+      log("debug", "recall input", {
+        sessionId,
+        messageId: data.messageId,
+        agent: data.agent,
+        text: data.userText,
+      });
 
       const res = await recallWithTimeout({
         baseUrl,
@@ -94,7 +93,7 @@ export const AjtksPlugin: Plugin = async ({ client: opencode }, options) => {
         onFailure: (reason, extra) =>
           log("warn", "recall failed", { sessionId, reason, ...extra }),
         request: {
-          query: userText,
+          query: data.userText,
           budget: recallBudget,
           max_tokens: recallMaxTokens,
           types: ["observation", "world", "experience"],
@@ -191,7 +190,7 @@ function fillOptions(options?: Record<string, unknown>): FilledOptions {
     bankId: "openclaw",
     apiKey: undefined,
     agentAllowList: ["build"],
-    recallTimeoutMs: 1_500,
+    recallTimeoutMs: 30_000,
     recallBudget: "mid",
     recallMaxTokens: 2_000,
     recallEntityMaxTokens: 500,
@@ -214,46 +213,39 @@ type FilledOptions = {
 };
 
 type SessionId = string;
-type SessionData = { userMessageId: string | null; agent: string | null };
+type ModelRef = { providerID: string; modelID: string };
+type SystemModelRef = { providerID: string; id: string };
+type SessionData = {
+  agent: string;
+  messageId: string;
+  model: ModelRef;
+  userText: string;
+};
 
 class SessionCache {
   private map = new Map<SessionId, SessionData>();
 
-  setUserMessageId(sessionId: SessionId, userMessageId: string) {
-    this.setData(sessionId).userMessageId = userMessageId;
+  set(sessionId: SessionId, data: SessionData) {
+    this.map.set(sessionId, data);
   }
 
-  takeUserMessageId(sessionId: SessionId): string | null {
+  takeForModel(
+    sessionId: SessionId,
+    model: SystemModelRef,
+  ): SessionData | null {
     const data = this.map.get(sessionId);
     if (!data) return null;
+    if (!isSameModel(data.model, model)) return null;
 
-    const userMessageId = data.userMessageId;
-    data.userMessageId = null;
-    return userMessageId;
-  }
-
-  setAgent(sessionId: SessionId, agent: string) {
-    this.setData(sessionId).agent = agent;
-  }
-
-  takeAgent(sessionId: SessionId): string | null {
-    const data = this.map.get(sessionId);
-    if (!data) return null;
-
-    const agent = data.agent;
-    data.agent = null;
-    return agent;
+    this.map.delete(sessionId);
+    return data;
   }
 
   delete(sessionId: SessionId) {
     this.map.delete(sessionId);
   }
+}
 
-  private setData(sessionId: SessionId): SessionData {
-    if (!this.map.has(sessionId)) {
-      this.map.set(sessionId, { userMessageId: null, agent: null });
-    }
-
-    return this.map.get(sessionId)!;
-  }
+function isSameModel(left: ModelRef, right: SystemModelRef): boolean {
+  return left.providerID === right.providerID && left.modelID === right.id;
 }
