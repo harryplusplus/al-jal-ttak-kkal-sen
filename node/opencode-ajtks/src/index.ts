@@ -1,4 +1,8 @@
 import type { Plugin } from "@opencode-ai/plugin";
+import type {
+  RecallRequest,
+  RecallResponse,
+} from "@vectorize-io/hindsight-client";
 import {
   HindsightClient,
   recallResponseToPromptString,
@@ -28,6 +32,11 @@ export const AjtksPlugin: Plugin = async ({ client: opencode }, options) => {
     apiKey,
     autoRecall,
     agentAllowList,
+    recallTimeoutMs,
+    recallBudget,
+    recallMaxTokens,
+    recallEntityMaxTokens,
+    project,
   } = fillOptions(options);
   const sessionCache = new SessionCache();
   const hindsight = enabled ? new HindsightClient({ baseUrl, apiKey }) : null;
@@ -70,13 +79,14 @@ export const AjtksPlugin: Plugin = async ({ client: opencode }, options) => {
           documentId: sessionId,
           async: true,
           updateMode: "append",
-          tags: getRetainTags(sessionId, agent),
+          tags: getRetainTags(sessionId, agent, project),
           metadata: {
             harness: HARNESS,
             sessionId,
             userMessageId,
             assistantMessageId,
             ...(agent ? { agent } : {}),
+            ...(project ? { project } : {}),
           },
         });
       } else if (event.type === "session.deleted") {
@@ -109,14 +119,28 @@ export const AjtksPlugin: Plugin = async ({ client: opencode }, options) => {
       const userText = await fetchMessageText(sessionId, userMessageId);
       if (!userText) return;
 
-      const res = await hindsight?.recall(bankId, userText, {
-        budget: "low",
-        maxTokens: 2_000,
-        types: ["observation", "world", "experience"],
-        queryTimestamp: new Date().toISOString(),
-        includeEntities: true,
-        tags: getRecallTags(agent),
-        tagsMatch: "all_strict",
+      const recallTags = getRecallTags(project);
+      const res = await recallWithTimeout({
+        baseUrl,
+        apiKey,
+        bankId,
+        timeoutMs: recallTimeoutMs,
+        request: {
+          query: userText,
+          budget: recallBudget,
+          max_tokens: recallMaxTokens,
+          types: ["observation", "world", "experience"],
+          query_timestamp: new Date().toISOString(),
+          include: {
+            entities:
+              recallEntityMaxTokens === false
+                ? null
+                : { max_tokens: recallEntityMaxTokens },
+          },
+          ...(recallTags
+            ? { tags: recallTags, tags_match: "all_strict" as const }
+            : {}),
+        },
       });
       if (!res?.results.length) return;
 
@@ -127,6 +151,47 @@ export const AjtksPlugin: Plugin = async ({ client: opencode }, options) => {
     },
   };
 };
+
+async function recallWithTimeout({
+  baseUrl,
+  apiKey,
+  bankId,
+  request,
+  timeoutMs,
+}: {
+  baseUrl: string;
+  apiKey: string | undefined;
+  bankId: string;
+  request: RecallRequest;
+  timeoutMs: number;
+}): Promise<RecallResponse | null> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), Math.max(1, timeoutMs));
+
+  try {
+    const url = new URL(
+      `/v1/default/banks/${encodeURIComponent(bankId)}/memories/recall`,
+      baseUrl,
+    );
+    const response = await fetch(url, {
+      method: "POST",
+      signal: controller.signal,
+      headers: {
+        "Content-Type": "application/json",
+        ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
+      },
+      body: JSON.stringify(request),
+    });
+
+    if (!response.ok) return null;
+
+    return (await response.json()) as RecallResponse;
+  } catch {
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 function wrapRetainContent(userText: string, assistantText: string): string {
   return [
@@ -158,17 +223,23 @@ function wrapRecallContent(text: string): string {
   ].join("\n");
 }
 
-function getRetainTags(sessionId: SessionId, agent: string | null): string[] {
+function getRetainTags(
+  sessionId: SessionId,
+  agent: string | null,
+  project: string | undefined,
+): string[] {
   return [
     `harness:${HARNESS}`,
     "scope:local",
     `session:${sessionId}`,
     ...(agent ? [`agent:${agent}`] : []),
+    ...(project ? [`project:${project}`] : []),
   ];
 }
 
-function getRecallTags(agent: string): string[] {
-  return [`harness:${HARNESS}`, `agent:${agent}`];
+function getRecallTags(project: string | undefined): string[] | undefined {
+  if (!project) return undefined;
+  return [`project:${project}`];
 }
 
 function fillOptions(options?: Record<string, unknown>): FilledOptions {
@@ -180,6 +251,11 @@ function fillOptions(options?: Record<string, unknown>): FilledOptions {
     autoRecall: true,
     autoRetain: true,
     agentAllowList: ["build"],
+    recallTimeoutMs: 1_500,
+    recallBudget: "mid",
+    recallMaxTokens: 2_000,
+    recallEntityMaxTokens: 500,
+    project: undefined,
   };
   return { ...defaultOptions, ...options };
 }
@@ -192,6 +268,11 @@ type FilledOptions = {
   agentAllowList: string[];
   autoRecall: boolean;
   autoRetain: boolean;
+  recallTimeoutMs: number;
+  recallBudget: "low" | "mid" | "high";
+  recallMaxTokens: number;
+  recallEntityMaxTokens: false | number;
+  project: string | undefined;
 };
 
 type SessionId = string;
@@ -235,10 +316,7 @@ class SessionCache {
   }
 
   getAgent(sessionId: SessionId): string | null {
-    const data = this.map.get(sessionId);
-    if (!data) return null;
-
-    return data.agent;
+    return this.map.get(sessionId)?.agent ?? null;
   }
 
   delete(sessionId: SessionId) {
