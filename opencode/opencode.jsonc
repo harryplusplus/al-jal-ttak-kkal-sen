@@ -13,7 +13,7 @@
   },
   "plugin": [
     [
-      "file:///Users/harry/repo/al-jal-ttak-kkal-sen/node/opencode-ajtks/src/index.ts",
+      "file:///Users/harry/repo/al-jal-ttak-kkal-sen/node/opencode-ajtks/index.ts",
       {},
     ],
   ],

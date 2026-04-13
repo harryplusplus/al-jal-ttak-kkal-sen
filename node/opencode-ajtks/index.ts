@@ -1,4 +1,4 @@
-import type { Plugin } from "@opencode-ai/plugin";
+import type { Plugin, PluginModule } from "@opencode-ai/plugin";
 import type {
   RecallRequest,
   RecallResponse,
@@ -120,6 +120,10 @@ export const AjtksPlugin: Plugin = async ({ client: opencode }, options) => {
     },
   };
 };
+
+const module: PluginModule = { id: "ajtks", server: AjtksPlugin };
+
+export default module;
 
 async function recallWithTimeout({
   baseUrl,
