@@ -215,6 +215,5 @@ __marimo__/
 # Node.js
 node_modules/
 
-# VectorChord BM25
-/VectorChord*/
-/pg_tokenizer.rs*/
+# Test
+/test_workspace/

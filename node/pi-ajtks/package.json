@@ -1,13 +1,16 @@
 {
-  "name": "pi-hindsight",
+  "name": "pi-ajtks",
+  "keywords": [
+    "pi-package"
+  ],
   "dependencies": {
     "@vectorize-io/hindsight-client": "^0.5.1"
   },
-  "devDependencies": {
-    "@mariozechner/pi-coding-agent": "^0.67.1",
-    "@sinclair/typebox": "^0.34.49"
-  },
   "peerDependencies": {
+    "@mariozechner/pi-coding-agent": "*",
+    "@sinclair/typebox": "*"
+  },
+  "devDependencies": {
     "@mariozechner/pi-coding-agent": "^0.67.1",
     "@sinclair/typebox": "^0.34.49"
   }

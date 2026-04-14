@@ -29,7 +29,7 @@ importers:
         specifier: ^1.4.3
         version: 1.4.3
 
-  node/pi-hindsight:
+  node/pi-ajtks:
     dependencies:
       '@vectorize-io/hindsight-client':
         specifier: ^0.5.1
@@ -41,6 +41,12 @@ importers:
       '@sinclair/typebox':
         specifier: ^0.34.49
         version: 0.34.49
+
+  test_workspace:
+    dependencies:
+      '@ollama/pi-web-search':
+        specifier: ^0.0.5
+        version: 0.0.5
 
 packages:
 
@@ -702,6 +708,9 @@ packages:
   '@nolyfill/is-core-module@1.0.39':
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
+
+  '@ollama/pi-web-search@0.0.5':
+    resolution: {integrity: sha512-qz6T31cccn5vg/+BeEwEylYpDU2hdrVGKhUzi4m7FZv5z9RTqF1HUQ8p4kHXhd0aYjd8TMcZvonjwnpTHPnYsQ==}
 
   '@opencode-ai/plugin@1.4.3':
     resolution: {integrity: sha512-Ob/3tVSIeuMRJBr2O23RtrnC5djRe01Lglx+TwGEmjrH9yDBJ2tftegYLnNEjRoMuzITgq9LD8168p4pzv+U/A==}
@@ -5246,6 +5255,8 @@ snapshots:
       fastq: 1.20.1
 
   '@nolyfill/is-core-module@1.0.39': {}
+
+  '@ollama/pi-web-search@0.0.5': {}
 
   '@opencode-ai/plugin@1.4.3':
     dependencies:
