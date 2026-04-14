@@ -104,8 +104,16 @@ export default function hindsightExtension(pi: ExtensionAPI) {
         }),
       );
 
-      // TODO: Add recall options.
-      waiters.push(hindsight.recall(config.bankId, event.prompt));
+      waiters.push(
+        hindsight.recall(config.bankId, event.prompt, {
+          budget: "mid",
+          includeEntities: true,
+          maxEntityTokens: 800,
+          includeSourceFacts: true,
+          maxSourceFactsTokens: 2048,
+          types: ["world", "experience", "observation"],
+        }),
+      );
 
       const response = await Promise.race(waiters);
       if (!response) return;
