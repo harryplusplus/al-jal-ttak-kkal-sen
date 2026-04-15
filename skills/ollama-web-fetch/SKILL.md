@@ -1,6 +1,6 @@
 ---
 name: ollama-web-fetch
-description: Ollama 웹 페치 API를 사용해 웹 페이지 내용을 가져옵니다. 특정 URL의 페이지 내용, 제목, 링크를 확인할 때 사용하세요.
+description: "웹 페치 스킬입니다. 특정 URL의 본문 텍스트, 제목, 링크를 읽을 때 사용하세요. 실행: bash 도구로 uv run scripts/fetch.py URL 을 실행. URL에 https://가 없어도 자동 처리됩니다. 결과는 JSON으로 title, content, links를 반환합니다."
 license: MIT
 compatibility: uv와 인터넷 접속이 필요합니다.
 metadata:

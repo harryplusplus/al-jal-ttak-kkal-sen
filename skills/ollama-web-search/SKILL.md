@@ -1,6 +1,6 @@
 ---
 name: ollama-web-search
-description: Ollama 웹 검색 API를 사용해 웹을 검색합니다. 사용자가 최신 정보, 뉴스, 사실 확인, 웹 검색을 요청할 때 사용하세요.
+description: "웹 검색 스킬입니다. 최신 뉴스, 사실 확인, 실시간 정보가 필요할 때 사용하세요. 실행: bash 도구로 uv run scripts/search.py 검색어 를 실행. 결과는 JSON 배열로 title, url, content 필드를 반환합니다."
 license: MIT
 compatibility: uv와 인터넷 접속이 필요합니다.
 metadata:
