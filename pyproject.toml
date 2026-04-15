@@ -24,32 +24,34 @@ members = ["python/*"]
 [tool.pyright]
 typeCheckingMode = "strict"
 reportImplicitOverride = true
-include = ["src/**/*.py", "python/*/src/**/*.py"]
+include = ["python/*/src/**/*.py", "skills/*/scripts/**/*.py", "src/**/*.py"]
 
 [tool.ruff]
 target-version = "py314"
 include = [
-    "src/**/*.py",
-    "python/*/src/**/*.py",
     "pyproject.toml",
     "python/*/pyproject.toml",
+    "python/*/src/**/*.py",
+    "skills/*/scripts/**/*.py",
+    "src/**/*.py",
 ]
+exclude = ["external"]
 
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
+    "BLE001",
     "COM812",
     "COM819",
     "D",
     "EM101",
     "EM102",
-    "TRY003",
+    "PLR2004",
+    "S110",
+    "S310",
     "S603",
     "S607",
-    "BLE001",
-    "T201",
-    "S310",
-    "PLR2004",
     "SIM105",
-    "S110",
+    "T201",
+    "TRY003",
 ]

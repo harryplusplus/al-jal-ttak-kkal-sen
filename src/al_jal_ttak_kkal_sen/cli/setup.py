@@ -143,7 +143,7 @@ def _wait_for_postgres_ready() -> None:
     for _ in range(6 * 5):
         if _is_postgres_ready():
             return
-        print("Waiting for PostgreSQL to be ready...", flush=True)  # noqa: T201
+        print("Waiting for PostgreSQL to be ready...", flush=True)
         time.sleep(10)
 
     raise RuntimeError("PostgreSQL is not ready after waiting for 5 minutes.")
