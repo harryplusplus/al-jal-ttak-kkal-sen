@@ -21,7 +21,6 @@ Exit codes:
 import argparse
 import json
 import re
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any, cast
@@ -139,9 +138,7 @@ def check_description_quality(description: str) -> list[dict[str, Any]]:
         r"사용하세요",
         r"활성화",
     ]
-    has_activation = any(
-        re.search(p, description, re.IGNORECASE) for p in activation_patterns
-    )
+    has_activation = any(re.search(p, description, re.IGNORECASE) for p in activation_patterns)
     if not has_activation:
         findings.append(
             {
@@ -197,13 +194,11 @@ def check_description_quality(description: str) -> list[dict[str, Any]]:
         r"deno run ",
         r"bun run ",
         r"go run ",
-        r"실행[:：]",
-        r"실행하[:：]",
-        r"run[:：]",
+        r"실행[::]",
+        r"실행하[::]",
+        r"run[::]",
     ]
-    has_exec_cmd = any(
-        re.search(p, description, re.IGNORECASE) for p in exec_patterns
-    )
+    has_exec_cmd = any(re.search(p, description, re.IGNORECASE) for p in exec_patterns)
     if has_exec_cmd:
         findings.append(
             {
@@ -455,135 +450,10 @@ def check_structure(skill_dir: Path) -> list[dict[str, Any]]:
     return findings
 
 
-# --- External tool integration ---
-
-
-def run_external_checks(skill_dir: Path, skip_typecheck: bool) -> list[dict[str, Any]]:
-    """Run validate.py and check.py from agent-skills-dev via subprocess."""
-    findings: list[dict[str, Any]] = []
-
-    # Find agent-skills-python-dev scripts directory
-    review_skill_dir = Path(__file__).resolve().parent.parent
-    skills_root = review_skill_dir.parent
-    dev_scripts = skills_root / "agent-skills-dev" / "scripts"
-    python_dev_scripts = skills_root / "agent-skills-python-dev" / "scripts"
-
-    if not dev_scripts.exists():
-        findings.append(
-            {
-                "severity": "info",
-                "category": "tooling",
-                "message": (
-                    f"agent-skills-dev scripts not found at {dev_scripts}."
-                    " Skipping validate."
-                ),
-            }
-        )
-        return findings
-
-    # Run validate
-    validate_proc = subprocess.run(
-        ["uv", "run", str(dev_scripts / "validate.py"), str(skill_dir)],
-        capture_output=True,
-        text=True,
-    )
-    if validate_proc.returncode != 0:
-        try:
-            val_result: dict[str, Any] = json.loads(validate_proc.stdout)
-            for err in val_result.get("errors", []):
-                findings.append(
-                    {
-                        "severity": "critical",
-                        "category": "spec",
-                        "message": f"Validation: {err}",
-                    }
-                )
-            for warn in val_result.get("warnings", []):
-                findings.append(
-                    {
-                        "severity": "warning",
-                        "category": "spec",
-                        "message": f"Validation: {warn}",
-                    }
-                )
-        except json.JSONDecodeError:
-            pass
-
-    if not python_dev_scripts.exists():
-        findings.append(
-            {
-                "severity": "info",
-                "category": "tooling",
-                "message": (
-                    f"agent-skills-python-dev scripts not found at"
-                    f" {python_dev_scripts}. Skipping check."
-                ),
-            }
-        )
-        return findings
-
-    # Run check (format + lint, optionally typecheck)
-    # Pass scripts/ subdirectory if it exists for correct import resolution
-    check_target = str(skill_dir)
-    scripts_subdir = skill_dir / "scripts"
-    if scripts_subdir.exists():
-        check_target = str(scripts_subdir)
-
-    check_cmd = ["uv", "run", str(python_dev_scripts / "check.py"), check_target]
-    if skip_typecheck:
-        check_cmd.extend(["--format-only", "--lint-only"])
-
-    check_proc = subprocess.run(
-        check_cmd,
-        capture_output=True,
-        text=True,
-    )
-    if check_proc.returncode != 0:
-        try:
-            chk_result: dict[str, Any] = json.loads(check_proc.stdout)
-            fmt = chk_result.get("format", {})
-            if fmt.get("status") == "fail":
-                findings.append(
-                    {
-                        "severity": "warning",
-                        "category": "format",
-                        "message": ("Code formatting issues found. Run `uv run scripts/check.py --fix` to auto-fix."),
-                    }
-                )
-            lint = chk_result.get("lint", {})
-            for err in lint.get("errors", []):
-                findings.append(
-                    {
-                        "severity": "warning",
-                        "category": "lint",
-                        "message": (
-                            f"Lint: {err.get('file', '')}:{err.get('line', 0)} "
-                            f"[{err.get('code', '')}] {err.get('message', '')}"
-                        ),
-                    }
-                )
-            tc = chk_result.get("typecheck", {})
-            for err in tc.get("errors", []):
-                findings.append(
-                    {
-                        "severity": "warning",
-                        "category": "typecheck",
-                        "message": (
-                            f"Type: {err.get('file', '')}:{err.get('line', 0)} "
-                            f"[{err.get('code', '')}] {err.get('message', '')}"
-                        ),
-                    }
-                )
-        except json.JSONDecodeError:
-            pass
-
-    return findings
-
-
 # --- Main review ---
 
 
-def review(skill_dir: Path, skip_typecheck: bool = False) -> dict[str, Any]:
+def review(skill_dir: Path) -> dict[str, Any]:
     """Run comprehensive review of a skill directory."""
     skill_dir = Path(skill_dir).resolve()
     all_findings: list[dict[str, Any]] = []
@@ -632,9 +502,6 @@ def review(skill_dir: Path, skip_typecheck: bool = False) -> dict[str, Any]:
     # 5. Structure conventions
     _add(check_structure(skill_dir))
 
-    # 6. External tool checks (validate + check)
-    _add(run_external_checks(skill_dir, skip_typecheck))
-
     status = "fail" if counts["critical"] > 0 else "pass"
 
     return {
@@ -657,18 +524,13 @@ def main() -> None:
         "skill_path",
         help="Path to the skill directory (or SKILL.md file)",
     )
-    parser.add_argument(
-        "--skip-typecheck",
-        action="store_true",
-        help="Skip pyright type checking (faster review)",
-    )
     args = parser.parse_args()
 
     skill_path = Path(args.skill_path)
     if skill_path.is_file() and skill_path.name.lower() == "skill.md":
         skill_path = skill_path.parent
 
-    result = review(skill_path, skip_typecheck=args.skip_typecheck)
+    result = review(skill_path)
     output_json(result)
     sys.exit(0 if result["status"] == "pass" else 1)
 

@@ -1,6 +1,6 @@
 ---
 name: ollama-web-search
-description: "웹 검색 스킬입니다. 최신 뉴스, 사실 확인, 실시간 정보가 필요할 때 사용하세요. 실행: bash 도구로 uv run scripts/search.py 검색어 를 실행. 결과는 JSON 배열로 title, url, content 필드를 반환합니다."
+description: "웹 검색 스킬입니다. 최신 뉴스, 사실 확인, 실시간 정보가 필요할 때 사용하세요. 사용자가 시의적절한 정보를 요구하거나, 최신 동향을 확인하거나, 온라인에서 사실을 검증해야 하는 경우에 활성화하세요. 검색어로 웹을 검색해 관련 결과를 반환합니다."
 license: MIT
 compatibility: uv가 필요합니다.
 metadata:

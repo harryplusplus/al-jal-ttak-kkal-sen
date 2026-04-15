@@ -1,6 +1,6 @@
 ---
 name: ollama-web-fetch
-description: "웹 페치 스킬입니다. 특정 URL의 본문 텍스트, 제목, 링크를 읽을 때 사용하세요. 실행: bash 도구로 uv run scripts/fetch.py URL 을 실행. URL에 https://가 없어도 자동 처리됩니다. 결과는 JSON으로 title, content, links를 반환합니다."
+description: "웹 페치 스킬입니다. 특정 URL의 웹 페이지 본문 텍스트, 제목, 링크를 읽어야 할 때 사용하세요. 웹 문서의 내용을 확인하거나, 페이지에서 링크를 추출하거나, URL로 지정된 리소스의 텍스트를 가져와야 하는 경우에 활성화하세요. URL 스킴이 없어도 자동 처리됩니다."
 license: MIT
 compatibility: uv가 필요합니다.
 metadata:
