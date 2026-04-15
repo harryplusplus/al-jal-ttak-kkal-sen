@@ -129,23 +129,27 @@ def check_description_quality(description: str) -> list[dict[str, Any]]:
             }
         )
 
-    # Check for imperative phrasing
-    imperative_patterns = [
+    # Check for activation condition phrasing
+    activation_patterns = [
         r"use this skill when",
         r"use when",
         r"activate when",
-        r"~할 때 사용",
+        r"~할 때",
+        r"~하는 경우",
         r"사용하세요",
+        r"활성화",
     ]
-    has_imperative = any(re.search(p, description, re.IGNORECASE) for p in imperative_patterns)
-    if not has_imperative:
+    has_activation = any(
+        re.search(p, description, re.IGNORECASE) for p in activation_patterns
+    )
+    if not has_activation:
         findings.append(
             {
                 "severity": "suggestion",
                 "category": "description",
                 "message": (
-                    "Consider using imperative phrasing like 'Use this "
-                    "skill when...' to help agents decide when to activate."
+                    "Consider adding activation conditions like 'use when' "
+                    "or '~할 때' to help agents decide when to activate."
                 ),
             }
         )
