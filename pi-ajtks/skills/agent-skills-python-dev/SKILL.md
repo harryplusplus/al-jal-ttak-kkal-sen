@@ -78,6 +78,6 @@ uv run scripts/check.py <path>... --format-only --lint-only
 
 ## 주의사항
 
-- `uvx`로 ruff/pyright를 실행하므로 uv가 설치되어 있어야 합니다
-- `_common.py` 등 프라이빗 모듈(`_` 접두사)의 임포트는 `extraPaths`로 자동 해결됩니다
-- 타입체크는 `--typecheck-only`로 단독 실행하거나 기본 전체 검사에 포함됩니다
+- `uvx`로 ruff/pyright를 실행하므로 uv가 설치되어 있어야 합니다.
+- `_common.py` 등 프라이빗 모듈(`_` 접두사)의 임포트는 `extraPaths`로 자동 해결됩니다.
+- 타입체크는 `--typecheck-only`로 단독 실행하거나 기본 전체 검사에 포함됩니다.
