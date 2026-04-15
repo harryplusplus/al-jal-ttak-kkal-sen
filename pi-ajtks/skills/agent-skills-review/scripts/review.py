@@ -424,18 +424,21 @@ def run_external_checks(skill_dir: Path, skip_typecheck: bool) -> list[dict[str,
     """Run validate.py and check.py from agent-skills-dev via subprocess."""
     findings: list[dict[str, Any]] = []
 
-    # Find agent-skills-dev scripts directory
-    # Look relative to this skill's parent directory
+    # Find agent-skills-python-dev scripts directory
     review_skill_dir = Path(__file__).resolve().parent.parent
     skills_root = review_skill_dir.parent
     dev_scripts = skills_root / "agent-skills-dev" / "scripts"
+    python_dev_scripts = skills_root / "agent-skills-python-dev" / "scripts"
 
     if not dev_scripts.exists():
         findings.append(
             {
                 "severity": "info",
                 "category": "tooling",
-                "message": (f"agent-skills-dev scripts not found at {dev_scripts}. Skipping validate/check."),
+                "message": (
+                    f"agent-skills-dev scripts not found at {dev_scripts}."
+                    " Skipping validate."
+                ),
             }
         )
         return findings
@@ -468,6 +471,19 @@ def run_external_checks(skill_dir: Path, skip_typecheck: bool) -> list[dict[str,
         except json.JSONDecodeError:
             pass
 
+    if not python_dev_scripts.exists():
+        findings.append(
+            {
+                "severity": "info",
+                "category": "tooling",
+                "message": (
+                    f"agent-skills-python-dev scripts not found at"
+                    f" {python_dev_scripts}. Skipping check."
+                ),
+            }
+        )
+        return findings
+
     # Run check (format + lint, optionally typecheck)
     # Pass scripts/ subdirectory if it exists for correct import resolution
     check_target = str(skill_dir)
@@ -475,7 +491,7 @@ def run_external_checks(skill_dir: Path, skip_typecheck: bool) -> list[dict[str,
     if scripts_subdir.exists():
         check_target = str(scripts_subdir)
 
-    check_cmd = ["uv", "run", str(dev_scripts / "check.py"), check_target]
+    check_cmd = ["uv", "run", str(python_dev_scripts / "check.py"), check_target]
     if skip_typecheck:
         check_cmd.extend(["--format-only", "--lint-only"])
 

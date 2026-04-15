@@ -24,7 +24,6 @@ Agent Skills 스펙에 따라 스킬을 생성, 검증, 유지관리합니다.
 - **`scripts/validate.py`** — 스킬 디렉토리를 스펙에 맞게 검증
 - **`scripts/read_properties.py`** — SKILL.md frontmatter 속성을 JSON으로 출력
 - **`scripts/to_prompt.py`** — `<available_skills>` XML 프롬프트 생성
-- **`scripts/check.py`** — ruff 포맷/린트 + pyright 타입체크 (프로젝트 독립 설정 사용)
 
 ## 워크플로우
 
@@ -64,23 +63,13 @@ uv run scripts/to_prompt.py <skill-dir1> [<skill-dir2> ...]
 
 출력 JSON의 `prompt` 필드에 `<available_skills>` XML이 포함됩니다.
 
-### 코드 품질 검사
+## 다른 스킬과의 관계
 
-```bash
-# 전체 검사 (포맷 + 린트 + 타입체크)
-uv run scripts/check.py <path>...
+- **agent-skills-python-dev**: Python 스크립트 품질 검사 (ruff + pyright)
+- **agent-skills-review**: 종합 검수 (스펙 + 품질 + 구조)
 
-# 자동 수정
-uv run scripts/check.py <path>... --fix
-
-# 개별 검사
-uv run scripts/check.py <path>... --format-only
-uv run scripts/check.py <path>... --lint-only
-uv run scripts/check.py <path>... --typecheck-only
-```
-
-`assets/ruff.toml`과 `assets/pyrightconfig.json`의 설정을 사용하므로
-프로젝트의 pyproject.toml에 의존하지 않습니다.
+스킬에 Python 스크립트가 포함된 경우 agent-skills-python-dev를,
+종합 검수가 필요한 경우 agent-skills-review를 참고하세요.
 
 ## 핵심 스펙 규칙
 
