@@ -1,112 +1,112 @@
-# Agent Skills Specification Summary
+# Agent Skills 스펙 요약
 
-Condensed reference for the Agent Skills open format.
-Full spec: https://agentskills.io/specification
-Repo: https://github.com/agentskills/agentskills
+Agent Skills 개방형 포맷의 축약 참조.
+전체 스펙: https://agentskills.io/specification
+리포지토리: https://github.com/agentskills/agentskills
 
-## Directory Structure
+## 디렉토리 구조
 
 ```
 skill-name/
-├── SKILL.md          # Required: metadata + instructions
-├── scripts/          # Optional: executable code
-├── references/       # Optional: documentation
-├── assets/           # Optional: templates, resources
-└── ...               # Any additional files or directories
+├── SKILL.md          # 필수: 메타데이터 + 지시사항
+├── scripts/          # 선택: 실행 가능한 코드
+├── references/       # 선택: 문서
+├── assets/           # 선택: 템플릿, 리소스
+└── ...               # 추가 파일/디렉토리 가능
 ```
 
-## SKILL.md Format
+## SKILL.md 형식
 
-YAML frontmatter + Markdown body:
+YAML frontmatter + Markdown 본문:
 
 ```markdown
 ---
 name: skill-name
-description: What this skill does and when to use it.
+description: 이 스킬이 하는 일과 언제 사용하는지.
 license: Apache-2.0
-compatibility: Requires Python 3.10+
+compatibility: Python 3.10+ 필요
 allowed-tools: Bash(git:*) Read
 metadata:
   author: org-name
   version: "1.0"
 ---
 
-# Skill Instructions
+# 스킬 지시사항
 
-Body content goes here...
+본문 내용은 여기에...
 ```
 
-### Frontmatter Fields
+### frontmatter 필드
 
-| Field | Required | Constraints |
-|-------|----------|-------------|
-| `name` | Yes | Max 64 chars. Lowercase letters, digits, hyphens only. No leading/trailing/consecutive hyphens. Must match directory name. |
-| `description` | Yes | Max 1024 chars. Non-empty. Describe what + when to use. |
-| `license` | No | String. License name or reference to bundled file. |
-| `compatibility` | No | Max 500 chars. Environment requirements. |
-| `allowed-tools` | No | Space-separated string of pre-approved tools. Experimental. |
-| `metadata` | No | Dict of string→string. Client-specific properties. |
+| 필드 | 필수 | 제약 |
+|------|------|------|
+| `name` | 예 | 최대 64자. 소문자, 숫자, 하이픈만. 시작/끝 하이픈 금지. 연속 하이픈 금지. 디렉토리명과 일치해야 함. |
+| `description` | 예 | 최대 1024자. 비어있으면 안 됨. 하는 일 + 사용 시점 모두 기술. |
+| `license` | 아니요 | 문자열. 라이선스 이름 또는 번들된 라이선스 파일 참조. |
+| `compatibility` | 아니요 | 최대 500자. 환경 요구사항. |
+| `allowed-tools` | 아니요 | 공백으로 구분된 문자열. 사전 승인된 도구. 실험적. |
+| `metadata` | 아니요 | 문자열→문자열 매핑. 클라이언트별 속성. |
 
-### Name Rules
+### name 규칙
 
-- 1–64 characters
-- Only `a-z`, `0-9`, `-`
-- Cannot start or end with `-`
-- No consecutive `--`
-- Must match parent directory name
-- Unicode: use NFKC normalization
+- 1~64자
+- `a-z`, `0-9`, `-`만 사용
+- `-`로 시작하거나 끝날 수 없음
+- `--`(연속 하이픈) 금지
+- 부모 디렉토리명과 일치해야 함
+- 유니코드: NFKC 정규화 적용
 
-### Description Guidelines
+### description 작성 가이드
 
-- Describe both **what** the skill does and **when** to use it
-- Use imperative phrasing: "Use this skill when..."
-- Include specific keywords for agent discovery
-- Err on the side of being pushy about when to activate
-- Max 1024 characters
+- **하는 일**과 **사용 시점** 모두 기술
+- 명령형 표현 사용: "이 스킬을 사용하세요 ~할 때"
+- 사용자 의도에 집중, 구현이 아닌
+- 활성화 키워드를 구체적으로 포함
+- 1024자 제한
 
-## Progressive Disclosure
+## 점진적 공개
 
-Three tiers of context loading:
+3단계 컨텍스트 로딩:
 
-1. **Catalog** (~50-100 tokens/skill): `name` + `description` loaded at startup
-2. **Instructions** (<5000 tokens recommended): Full SKILL.md body loaded on activation
-3. **Resources** (as needed): scripts/, references/, assets/ loaded on demand
+1. **카탈로그** (~50-100 토큰/스킬): `name` + `description`만 시작 시 로드
+2. **지시사항** (<5000 토큰 권장): SKILL.md 본문 전체를 활성화 시 로드
+3. **리소스** (필요 시): scripts/, references/, assets/는 필요할 때만 로드
 
-Keep SKILL.md under 500 lines. Move detailed content to separate files.
+SKILL.md은 500줄 이하 권장. 상세 내용은 별도 파일로 분리.
 
-## File References
+## 파일 참조
 
-- Use relative paths from skill root
-- Keep references one level deep from SKILL.md
-- Avoid deeply nested reference chains
+- 스킬 루트에서 상대 경로 사용
+- SKILL.md에서 한 단계 깊이까지만 참조
+- 깊이 중첩된 참조 체인 피하기
 
-## Scripts Best Practices
+## 스크립트 작성 관례
 
-- Self-contained or clearly document dependencies
-- PEP 723 inline metadata for Python scripts (`uv run`)
-- No interactive prompts — accept input via CLI flags, env vars, or stdin
-- Structured output (JSON) to stdout, diagnostics to stderr
-- Helpful error messages with actionable guidance
-- Idempotent where possible
-- Meaningful exit codes
+- 자체 포함 또는 의존성을 명확히 문서화
+- PEP 723 인라인 메타데이터 사용 (`uv run`으로 실행)
+- 대화형 프롬프트 금지 — CLI 인수, 환경변수, stdin으로 입력
+- JSON은 stdout, 진단은 stderr로 출력 분리
+- 실행 가능한 오류 메시지 제공
+- 멱등성(idempotency) 권장
+- 의미 있는 종료 코드 사용
 
-## Validation Checklist
+## 검증 체크리스트
 
-- [ ] SKILL.md exists with valid YAML frontmatter
-- [ ] `name` field: required, valid format, matches directory
-- [ ] `description` field: required, non-empty, ≤1024 chars
-- [ ] No unexpected frontmatter fields
-- [ ] `compatibility` ≤500 chars (if present)
-- [ ] `metadata` is string→string mapping (if present)
-- [ ] Body is non-empty with clear instructions
-- [ ] Body under 500 lines
-- [ ] Scripts are self-contained with PEP 723 metadata
-- [ ] File references use relative paths
+- [ ] SKILL.md 존재, 유효한 YAML frontmatter
+- [ ] `name` 필드: 필수, 유효한 형식, 디렉토리명과 일치
+- [ ] `description` 필드: 필수, 비어있지 않음, ≤1024자
+- [ ] 예상치 못한 frontmatter 필드 없음
+- [ ] `compatibility` ≤500자 (있는 경우)
+- [ ] `metadata` 값이 문자열→문자열 매핑 (있는 경우)
+- [ ] 본문이 비어있지 않고 명확한 지시사항 포함
+- [ ] 본문 500줄 이하
+- [ ] 스크립트가 PEP 723 메타데이터 포함
+- [ ] 파일 참조에 상대 경로 사용
 
-## Common Gotchas
+## 자주하는 실수
 
-- Description with unquoted colons is technically invalid YAML but common in practice — PyYAML handles it, strictyaml does not
-- `metadata` values must be strings (quote numbers: `version: "1.0"`)
-- `allowed-tools` uses a hyphen, not underscore
-- Directory name must exactly match the `name` field
-- SKILL.md (uppercase) is preferred over skill.md (lowercase)
+- description에 콜론이 포함되면 YAML에서 따옴표 필요 (PyYAML은 관대하지만 strictyaml은 아님)
+- `metadata` 값은 모두 문자열이어야 함 (숫자는 따옴표: `version: "1.0"`)
+- `allowed-tools`는 하이픈 사용 (underscore 아님)
+- 디렉토리명이 `name` 필드와 정확히 일치해야 함
+- SKILL.md (대문자)가 skill.md (소문자)보다 우선
