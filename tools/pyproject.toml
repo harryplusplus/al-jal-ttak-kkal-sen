@@ -1,11 +1,11 @@
 [project]
-name = "log-server"
+name = "tools"
 version = "0.0.0"
 requires-python = ">=3.14"
-dependencies = []
+dependencies = ["rich>=14.3.4"]
 
 [project.scripts]
-log-server = "log_server.cli:main"
+setup = "tools.cli.setup:main"
 
 [tool.uv]
 package = true

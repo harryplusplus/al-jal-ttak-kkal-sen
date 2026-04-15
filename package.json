@@ -2,11 +2,6 @@
   "dependencies": {
     "@vectorize-io/hindsight-control-plane": "^0.5.0"
   },
-  "devDependencies": {
-    "@typescript/native-preview": "7.0.0-dev.20260415.1",
-    "oxfmt": "^0.45.0",
-    "oxlint": "^1.60.0"
-  },
   "engines": {
     "node": ">=24"
   },

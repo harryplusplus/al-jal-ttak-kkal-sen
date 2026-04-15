@@ -1,5 +1,5 @@
 {
-  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "$schema": "/Users/harry/.nvm/versions/node/v24.14.0/lib/node_modules/oxfmt/configuration_schema.json",
   "printWidth": 80,
   "objectWrap": "collapse",
   "semi": false,

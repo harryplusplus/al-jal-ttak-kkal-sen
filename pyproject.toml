@@ -5,35 +5,27 @@ requires-python = ">=3.14"
 dependencies = [
     "hindsight-api-slim>=0.5.0",
     "python-dotenv>=1.2.2",
-    "rich>=14.3.4",
     "sentence-transformers>=5.4.0",
 ]
 
 [dependency-groups]
 dev = ["pyright>=1.1.408", "ruff>=0.15.10"]
 
-[project.scripts]
-setup = "al_jal_ttak_kkal_sen.cli.setup:main"
-
-[tool.uv]
-package = true
-
 [tool.uv.workspace]
-members = ["python/*"]
+members = ["tools"]
 
 [tool.pyright]
 typeCheckingMode = "strict"
 reportImplicitOverride = true
-include = ["python/*/src/**/*.py", "skills/*/scripts/**/*.py", "src/**/*.py"]
+include = ["pi-ajtks/skills/**/*.py", "tools/src/**/*.py"]
 
 [tool.ruff]
 target-version = "py314"
 include = [
+    "pi-ajtks/skills/**/*.py",
     "pyproject.toml",
-    "python/*/pyproject.toml",
-    "python/*/src/**/*.py",
-    "skills/*/scripts/**/*.py",
-    "src/**/*.py",
+    "tools/src/**/*.py",
+    "tools/pyproject.toml",
 ]
 exclude = ["external"]
 
