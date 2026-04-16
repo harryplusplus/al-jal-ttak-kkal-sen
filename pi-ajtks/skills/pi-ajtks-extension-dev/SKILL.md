@@ -5,7 +5,7 @@ description: >-
   린트, 타입체크를 검사합니다. Pi 확장을 만들거나 수정할 때, 확장 품질
   검사가 필요할 때 사용하세요.
 license: MIT
-compatibility: npm이 필요합니다.
+compatibility: npx가 필요합니다.
 metadata:
   author: al-jal-ttak-kkal-sen
   version: "1.0"
