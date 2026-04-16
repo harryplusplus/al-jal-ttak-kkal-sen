@@ -117,7 +117,7 @@ export default function (pi: ExtensionAPI) {
 
 주요 API: `pi.registerTool()`, `pi.registerCommand()`, `pi.exec()`, `pi.sendMessage()`, `ctx.ui.notify()`, `ctx.sessionManager`
 
-상세 API: https://pi.mariozechner.ca/docs/extensions
+상세 API: Pi 확장 문서는 `@mariozechner/pi-coding-agent` 패키지의 `docs/extensions.md`를 참조하세요.
 
 ## 주의사항
 
